@@ -311,6 +311,18 @@ select {
   font-weight: 600;
 }
 
+.hero__support-note {
+  margin: 1.25rem 0 0;
+  max-width: 640px;
+  color: rgba(255, 255, 255, 0.82);
+  line-height: 1.7;
+}
+
+.hero__support-note a {
+  color: var(--accent);
+  font-weight: 800;
+}
+
 .hero__visual {
   position: relative;
   display: grid;
