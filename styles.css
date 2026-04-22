@@ -368,55 +368,11 @@ select {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.road-graphic {
-  position: relative;
+.hero-card__visual-image {
+  width: 100%;
   height: 220px;
   border-radius: 24px;
-  background:
-    radial-gradient(circle at top left, rgba(255, 255, 255, 0.2), transparent 34%),
-    linear-gradient(180deg, #1691cb 0%, #0c6b98 42%, #0b3e59 100%);
-  overflow: hidden;
-}
-
-.road-graphic__mountain,
-.road-graphic__mountain--two {
-  position: absolute;
-  bottom: 45%;
-  width: 70%;
-  height: 80%;
-  background: linear-gradient(180deg, #77d6f3 0%, #129fd8 100%);
-  clip-path: polygon(0 100%, 32% 42%, 44% 56%, 63% 22%, 100% 100%);
-}
-
-.road-graphic__mountain {
-  left: 3%;
-}
-
-.road-graphic__mountain--two {
-  right: -6%;
-  width: 54%;
-  height: 70%;
-}
-
-.road-graphic__line,
-.road-graphic__line--two {
-  position: absolute;
-  bottom: -5%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 54%;
-  height: 120%;
-  border-radius: 50% 50% 0 0 / 72% 72% 0 0;
-}
-
-.road-graphic__line {
-  background: linear-gradient(180deg, #2ec3f6 0%, #0d4f73 100%);
-  width: 64%;
-}
-
-.road-graphic__line--two {
-  width: 18%;
-  background: linear-gradient(180deg, #ffd34e 0%, #efb400 100%);
+  object-fit: cover;
 }
 
 .hero-card__copy {
@@ -470,7 +426,8 @@ select {
 .steps-grid,
 .testimonials-grid,
 .programs-grid,
-.content-grid {
+.content-grid,
+.gallery-grid {
   display: grid;
   gap: 1.2rem;
 }
@@ -497,6 +454,10 @@ select {
 
 .content-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.gallery-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .info-card,
@@ -720,6 +681,27 @@ select {
   border-radius: 20px;
 }
 
+.gallery-card {
+  margin: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  background: var(--surface);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  object-fit: cover;
+  transition: transform 220ms ease;
+}
+
+.gallery-card:hover img {
+  transform: scale(1.03);
+}
+
 .service-card:hover,
 .info-card:hover,
 .step-card:hover,
@@ -790,37 +772,19 @@ select {
   margin-top: -2rem;
   margin-left: auto;
   width: 82%;
-  height: 260px;
+  min-height: 260px;
   border-radius: 26px;
-  background:
-    radial-gradient(circle at top left, rgba(119, 214, 243, 0.3), transparent 35%),
-    linear-gradient(180deg, rgba(46, 195, 246, 0.8), rgba(7, 63, 92, 0.8));
+  background: rgba(255, 255, 255, 0.08);
   position: relative;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.employment-panel__routes::before,
-.employment-panel__routes::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50% 50% 0 0 / 72% 72% 0 0;
-}
-
-.employment-panel__routes::before {
-  bottom: -10%;
-  width: 66%;
-  height: 120%;
-  background: linear-gradient(180deg, rgba(8, 56, 82, 0.1), rgba(8, 56, 82, 1));
-}
-
-.employment-panel__routes::after {
-  bottom: -10%;
-  width: 14%;
-  height: 120%;
-  background: linear-gradient(180deg, rgba(255, 211, 78, 1), rgba(239, 180, 0, 1));
+.employment-panel__routes img {
+  width: 100%;
+  height: 100%;
+  min-height: 260px;
+  object-fit: cover;
 }
 
 .contact-list {
@@ -848,6 +812,30 @@ select {
   color: var(--text-muted);
 }
 
+.social-links {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-links a {
+  display: grid;
+  gap: 0.3rem;
+  padding: 1rem 1.2rem;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(13, 79, 115, 0.12);
+  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+}
+
+.social-links strong {
+  color: var(--surface-strong);
+}
+
+.social-links span {
+  color: var(--text-muted);
+}
+
 .contact-panel__surface {
   padding: 2rem;
   background:
@@ -858,6 +846,39 @@ select {
 
 .contact-panel__surface p {
   color: rgba(255, 255, 255, 0.82);
+}
+
+.map-card {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(13, 79, 115, 0.12);
+  box-shadow: var(--shadow-soft);
+}
+
+.map-card__copy strong {
+  color: var(--surface-strong);
+}
+
+.map-card__copy p {
+  margin: 0.5rem 0 1rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+.map-card iframe {
+  width: 100%;
+  height: 320px;
+  border: 0;
+  border-radius: 20px;
+}
+
+.map-card__link {
+  display: inline-flex;
+  margin-top: 0.9rem;
+  font-weight: 800;
+  color: var(--surface-strong);
 }
 
 .site-footer {
@@ -963,7 +984,8 @@ select {
   .steps-grid,
   .testimonials-grid,
   .programs-grid,
-  .content-grid {
+  .content-grid,
+  .gallery-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1063,6 +1085,12 @@ select {
 
   .hero-stats {
     grid-template-columns: 1fr;
+  }
+
+  .hero-card__visual-image,
+  .employment-panel__routes img,
+  .map-card iframe {
+    height: auto;
   }
 
   .brand__logo {
