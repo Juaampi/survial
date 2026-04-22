@@ -145,8 +145,8 @@ select {
 }
 
 .brand__logo {
-  width: clamp(138px, 14vw, 196px);
-  max-height: 58px;
+  width: clamp(210px, 22vw, 300px);
+  max-height: 88px;
   object-fit: contain;
 }
 
@@ -334,16 +334,17 @@ select {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 168px;
-  padding: 1.25rem;
-  background: rgba(5, 45, 66, 0.44);
+  min-height: 214px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .hero-card--brand img {
-  width: min(100%, 460px);
-  max-height: 132px;
-  object-fit: contain;
+  width: 100%;
+  max-height: 194px;
+  object-fit: cover;
+  border-radius: 22px;
 }
 
 .hero-card--road {
@@ -898,7 +899,11 @@ select {
   height: 2rem;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.35);
-  font-size: 0.78rem;
+}
+
+.whatsapp-float__icon svg {
+  width: 1.1rem;
+  height: 1.1rem;
 }
 
 .reveal {
@@ -1049,8 +1054,8 @@ select {
   }
 
   .brand__logo {
-    width: 134px;
-    max-height: 52px;
+    width: 190px;
+    max-height: 72px;
   }
 
   .whatsapp-float {
