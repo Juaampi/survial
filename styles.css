@@ -897,6 +897,16 @@ select {
   color: var(--white);
 }
 
+.footer-credit {
+  margin: 0.65rem 0 0;
+  font-size: 0.95rem;
+}
+
+.footer-credit a {
+  color: var(--accent);
+  font-weight: 700;
+}
+
 .footer-links {
   display: flex;
   flex-wrap: wrap;
