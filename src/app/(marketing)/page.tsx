@@ -1,0 +1,660 @@
+/* eslint-disable @next/next/no-img-element */
+export default function MarketingPage() {
+  return (
+    <>
+      <a
+        className="whatsapp-float"
+        href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20capacitaciones%20y%20la%20licencia%20profesional."
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Abrir WhatsApp de SurVial Academia"
+      >
+        <span className="whatsapp-float__icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32">
+            <path
+              d="M27.3 4.7A15.3 15.3 0 0 0 3.6 24.1L2 30l6.1-1.6A15.3 15.3 0 1 0 27.3 4.7zm-11.9 24a12.6 12.6 0 0 1-6.4-1.7l-.5-.3-3.6.9 1-3.5-.3-.5a12.6 12.6 0 1 1 9.8 5.1zm7-9.5c-.4-.2-2.4-1.2-2.8-1.3-.4-.2-.6-.2-.9.2l-.8 1c-.2.2-.4.3-.8.1a10.3 10.3 0 0 1-3-1.9 11.3 11.3 0 0 1-2.1-2.6c-.2-.4 0-.6.1-.8l.6-.7.4-.6c.1-.2.1-.5 0-.7-.1-.2-.9-2.2-1.3-3-.3-.7-.6-.6-.9-.6h-.8c-.3 0-.7.1-1 .5-.4.4-1.4 1.4-1.4 3.4s1.5 3.9 1.7 4.2c.2.3 3 4.6 7.2 6.4 1 .5 1.8.8 2.4 1 .9.3 1.7.3 2.3.2.7-.1 2.4-1 2.7-2 .3-1 .3-1.9.2-2-.1-.2-.4-.3-.8-.5z"
+              fill="currentColor"
+            />
+          </svg>
+        </span>
+        <span className="whatsapp-float__text">WhatsApp</span>
+      </a>
+
+      <header className="site-header" id="top">
+        <div className="container">
+          <nav className="navbar">
+            <a className="brand" href="#top" aria-label="Ir al inicio">
+              <img className="brand__logo" src="/assets/logo vial.png" alt="Logo de SurVial Academia" />
+            </a>
+
+            <div className="nav-links nav-links--desktop">
+              <a href="#institucional">Institucional</a>
+              <a href="#cursos">Cursos</a>
+              <a href="#contenidos">Contenidos</a>
+              <a href="#campus">Campus</a>
+              <a href="#galeria">Galería</a>
+              <a href="#certificado">Certificado</a>
+              <a href="#contacto">Contacto</a>
+              <a
+                className="button button--nav"
+                href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20capacitaciones%20y%20la%20licencia%20profesional."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Consultar por WhatsApp
+              </a>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main>
+        <section className="hero section-dark">
+          <div className="container hero__grid">
+            <div className="hero__content">
+              <p className="eyebrow">Academia de conductores profesionales</p>
+              <h1>Cursos y capacitaciones para avanzar con tu LNC profesional.</h1>
+              <p className="hero__lead">
+                En SurVial Academia organizamos tu camino con una propuesta clara, institucional y
+                profesional para formación inicial, renovación y actualización de conductores
+                profesionales interjurisdiccionales.
+              </p>
+
+              <div className="hero__actions">
+                <a
+                  className="button button--primary"
+                  href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20capacitaciones%20y%20la%20licencia%20profesional."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Consultar por WhatsApp
+                </a>
+                <a className="button button--ghost" href="#cursos">
+                  Ver cursos
+                </a>
+              </div>
+
+              <ul className="hero__highlights">
+                <li>Formación inicial y renovación</li>
+                <li>Marco legal actualizado</li>
+                <li>Clases para pasajeros y cargas</li>
+              </ul>
+
+              <p className="hero__support-note">
+                También te ayudamos desde el inicio del trámite en{" "}
+                <a href="https://lncargentina.seguridadvial.gob.ar/" target="_blank" rel="noreferrer">
+                  lncargentina.seguridadvial.gob.ar
+                </a>
+                .
+              </p>
+            </div>
+
+            <div className="hero__visual">
+              <div className="hero-card hero-card--brand">
+                <img src="/assets/logo 2 vial.jpg" alt="SurVial Academia" />
+              </div>
+
+              <div className="hero-card hero-card--road">
+                <img
+                  className="hero-card__visual-image"
+                  src="/assets/logo-survial.jpg"
+                  alt="Identidad visual de SurVial Academia"
+                />
+                <div className="hero-card__copy">
+                  <span className="hero-card__label">Clases habilitadas</span>
+                  <strong>Pasajeros: D1, D2 y D3. Cargas: C1, C2, C3, E1 y E2.</strong>
+                </div>
+              </div>
+
+              <div className="hero-stats">
+                <article>
+                  <strong>Respaldo institucional</strong>
+                  <span>Academia habilitada para dictar capacitaciones a conductores profesionales.</span>
+                </article>
+                <article>
+                  <strong>Orientación clara</strong>
+                  <span>Información ordenada sobre programas, contenidos y marco legal vigente.</span>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-light" id="institucional">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Institucional</p>
+              <h2>Formación profesional con respaldo normativo y presentación institucional clara.</h2>
+              <p>
+                Una sección pensada para transmitir seriedad, habilitación oficial y confianza a
+                quienes necesitan capacitarse como conductores profesionales interjurisdiccionales.
+              </p>
+            </div>
+
+            <div className="institutional-panel">
+              <div className="institutional-panel__copy">
+                <span className="panel-kicker">Prestador autorizado</span>
+                <h3>Academia habilitada por la Agencia Nacional de Seguridad Vial.</h3>
+                <p>
+                  Somos una Academia habilitada por la Agencia Nacional de Seguridad Vial, que se
+                  rige bajo el Decreto 196/2025 y la Disposición 219/2025, como prestador
+                  autorizado para dictar capacitaciones destinadas a Conductores Profesionales
+                  Interjurisdiccionales.
+                </p>
+              </div>
+
+              <div className="institutional-panel__legal">
+                <article className="legal-card">
+                  <strong>Clases habilitadas</strong>
+                  <div className="legal-tags">
+                    <span>Pasajeros: D1</span>
+                    <span>D2</span>
+                    <span>D3</span>
+                    <span>Cargas: C1</span>
+                    <span>C2</span>
+                    <span>C3</span>
+                    <span>E1</span>
+                    <span>E2</span>
+                  </div>
+                </article>
+
+                <article className="legal-card">
+                  <strong>Marco legal</strong>
+                  <ul className="legal-list">
+                    <li>Decreto 196/2025</li>
+                    <li>Disposición 219/2025</li>
+                    <li>Ley 24.449</li>
+                    <li>Ley 26.363</li>
+                  </ul>
+                </article>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-contrast" id="cursos">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Cursos / Capacitaciones</p>
+              <h2>Programas principales organizados según tu etapa profesional.</h2>
+              <p>
+                Separamos la información para que puedas identificar rápido qué programa necesitás y
+                qué incluye cada instancia de capacitación.
+              </p>
+            </div>
+
+            <div className="programs-grid">
+              <article className="program-card">
+                <div className="service-card__icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 2h10v4H7V2zm-2 6h14v14H5V8zm3 3v2h8v-2H8zm0 4v2h5v-2H8z" />
+                  </svg>
+                </div>
+                <span className="program-card__eyebrow">Formación Inicial Única</span>
+                <h3>Para quienes desean obtener por primera vez la LNC profesional.</h3>
+                <p>
+                  Programa orientado a conductores que inician su camino profesional y necesitan una
+                  base teórica y práctica ordenada.
+                </p>
+                <ul className="program-card__list">
+                  <li>Formación teórica y práctica</li>
+                  <li>18 hs reloj</li>
+                  <li>23 hs reloj para categorías E</li>
+                </ul>
+                <a
+                  href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20la%20Formaci%C3%B3n%20Inicial%20%C3%9Anica."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Consultar formación inicial
+                </a>
+              </article>
+
+              <article className="program-card">
+                <div className="service-card__icon">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2l9 4v6c0 5.3-3.8 9.9-9 10-5.2-.1-9-4.7-9-10V6l9-4zm-1 5v5H8v2h5V7h-2z" />
+                  </svg>
+                </div>
+                <span className="program-card__eyebrow">Programa de Renovación Profesional</span>
+                <h3>Para conductores que deben renovar su LNC con formación continua.</h3>
+                <p>
+                  Una propuesta breve, clara y transversal para mantener la actualización
+                  profesional en todas las categorías alcanzadas.
+                </p>
+                <ul className="program-card__list">
+                  <li>Formación continua</li>
+                  <li>Cursos de 5 hs reloj</li>
+                  <li>Aplica a todas las categorías</li>
+                </ul>
+                <a
+                  href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20Programa%20de%20Renovaci%C3%B3n%20Profesional."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Consultar renovación
+                </a>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-light" id="contenidos">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Contenidos</p>
+              <h2>Programas organizados por eje formativo, pasajeros y cargas.</h2>
+              <p>
+                Presentamos los contenidos de manera separada para mejorar la lectura, la
+                comprensión y la orientación de quienes consultan por su capacitación.
+              </p>
+            </div>
+
+            <div className="content-grid">
+              <article className="content-card">
+                <div className="icon-badge">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2l8 4v6c0 5-3.4 9.7-8 10-4.6-.3-8-5-8-10V6l8-4zm-1 13l6-6-1.4-1.4L11 12.2 8.4 9.6 7 11l4 4z" />
+                  </svg>
+                </div>
+                <h3>Ciclo Básico Transversal</h3>
+                <ul className="content-list">
+                  <li>Marco legal aplicado a la conducción</li>
+                  <li>Sistema vial y responsabilidad del conductor profesional</li>
+                  <li>Evaluaciones psicofísicas y autocontrol profesional</li>
+                  <li>Conducción defensiva y conducción segura</li>
+                </ul>
+              </article>
+
+              <article className="content-card">
+                <div className="icon-badge">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 17h18v2H3v-2zm2-8h14l1.5 6h-17L5 9zm2-4h10l1 2H6l1-2z" />
+                  </svg>
+                </div>
+                <h3>Pasajeros</h3>
+                <ul className="content-list">
+                  <li>Marco normativo y rol del conductor profesional</li>
+                  <li>Conducción segura en transporte de pasajeros</li>
+                  <li>Factores humanos y trato profesional</li>
+                  <li>Emergencias y actuación segura con el pasajero</li>
+                </ul>
+              </article>
+
+              <article className="content-card">
+                <div className="icon-badge">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 19h16v2H4v-2zm1-2V9l5 3V9l5 3V7l4 2v8H5z" />
+                  </svg>
+                </div>
+                <h3>Cargas</h3>
+                <ul className="content-list">
+                  <li>Conducción segura en vehículos pesados</li>
+                  <li>Factor humano y prevención de siniestros</li>
+                  <li>Vehículos articulados y dinámica con acoplado</li>
+                  <li>Carga y sujeción</li>
+                  <li>Nociones básicas de mercancías peligrosas</li>
+                </ul>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-dark section-process" id="proceso">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Cómo funciona</p>
+              <h2>Un proceso simple para ordenar tu consulta y avanzar con la capacitación adecuada.</h2>
+            </div>
+
+            <div className="steps-grid">
+              <article className="step-card">
+                <span>01</span>
+                <h3>Escribinos por WhatsApp</h3>
+                <p>
+                  Nos contás si necesitás formación inicial, renovación o ayuda desde el inicio del
+                  trámite en lncargentina.seguridadvial.gob.ar.
+                </p>
+              </article>
+
+              <article className="step-card">
+                <span>02</span>
+                <h3>Revisamos tu objetivo</h3>
+                <p>Te orientamos según tu categoría, necesidad de capacitación y etapa actual.</p>
+              </article>
+
+              <article className="step-card">
+                <span>03</span>
+                <h3>Te indicamos programa y contenidos</h3>
+                <p>Recibís una explicación clara sobre carga horaria, marco legal y formación aplicable.</p>
+              </article>
+
+              <article className="step-card">
+                <span>04</span>
+                <h3>Avanzás con más claridad</h3>
+                <p>Seguís el proceso con una presentación profesional, ordenada y fácil de comprender.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-light campus-access-section" id="campus">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Campus</p>
+              <h2>Ahora también podés ingresar al campus como alumno.</h2>
+              <p>
+                Sumamos un acceso privado para alumnos donde cada persona puede entrar con su
+                usuario, ver sus cursos, materiales, clases y evaluaciones. El equipo de SurVial
+                administra todo desde su panel interno.
+              </p>
+            </div>
+
+            <div className="campus-access-grid">
+              <article className="campus-access-card">
+                <span className="panel-kicker">Ingreso de alumnos</span>
+                <h3>Acceso al campus</h3>
+                <p>
+                  Si ya tenés tu usuario, entrá al campus para continuar con tu cursado, revisar
+                  materiales y completar tus evaluaciones.
+                </p>
+                <div className="campus-access-actions">
+                  <a className="button button--primary" href="/login">
+                    Iniciar sesión como alumno
+                  </a>
+                </div>
+              </article>
+
+              <article className="campus-access-card campus-access-card--soft">
+                <span className="panel-kicker">Gestión interna</span>
+                <h3>Administración SurVial</h3>
+                <p>
+                  El equipo puede crear cursos, módulos, clases, materiales e inscripciones desde
+                  un panel claro y ordenado.
+                </p>
+                <div className="campus-access-actions">
+                  <a className="button button--ghost" href="/admin/login">
+                    Panel administrativo
+                  </a>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-light" id="certificado">
+          <div className="container certificate-grid">
+            <div className="certificate-copy">
+              <p className="eyebrow">Certificado</p>
+              <h2>Presentación clara del certificado para que conozcas el formato de referencia.</h2>
+              <p>
+                Incorporamos un ejemplo visual del certificado para mejorar la comprensión de la
+                propuesta formativa y reforzar la presentación institucional del sitio.
+              </p>
+              <div className="certificate-points">
+                <div>
+                  <strong>Referencia visual</strong>
+                  <span>Una vista clara y prolija del ejemplo de certificado.</span>
+                </div>
+                <div>
+                  <strong>Integración institucional</strong>
+                  <span>Ubicado dentro del recorrido del sitio con la misma identidad visual.</span>
+                </div>
+              </div>
+              <a
+                className="button button--primary"
+                href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20certificados%20y%20las%20capacitaciones."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Consultar por certificados
+              </a>
+            </div>
+
+            <div className="certificate-card">
+              <img
+                src="/assets/ejemplocerti.jpg"
+                alt="Ejemplo de certificado de capacitación de SurVial Academia"
+              />
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-dark section-employment" id="trabajo">
+          <div className="container employment-grid">
+            <div className="employment-copy">
+              <p className="eyebrow">Perfil profesional</p>
+              <h2>Capacitación orientada a una conducción profesional, segura y responsable.</h2>
+              <p>
+                Organizamos la información para que cada conductor pueda identificar el programa que
+                necesita, comprender el marco legal y avanzar con una preparación clara y profesional.
+              </p>
+              <ul className="employment-list">
+                <li>Separación clara entre cursos, contenidos y respaldo legal.</li>
+                <li>Presentación institucional alineada con la identidad visual de la marca.</li>
+                <li>Comunicación profesional, directa y fácil de consultar desde el celular.</li>
+              </ul>
+              <a
+                className="button button--primary"
+                href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20los%20cursos%20y%20capacitaciones%20de%20SurVial%20Academia."
+                target="_blank"
+                rel="noreferrer"
+              >
+                Hablar con SurVial Academia
+              </a>
+            </div>
+
+            <aside className="employment-panel">
+              <div className="employment-panel__card">
+                <span className="panel-kicker">Marco legal</span>
+                <strong>Capacitación para conductores profesionales interjurisdiccionales.</strong>
+                <p>
+                  Una propuesta mejor organizada para destacar programas, contenidos específicos y
+                  el marco normativo que sostiene la actividad institucional.
+                </p>
+              </div>
+              <div className="employment-panel__routes">
+                <img src="/assets/logo-survial.jpg" alt="Identidad institucional de SurVial Academia" />
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section className="section section-contrast" id="galeria">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Galería</p>
+              <h2>Imágenes del espacio y del entorno para reconocer mejor el lugar.</h2>
+              <p>
+                Sumamos una galería visual para que quienes visitan por primera vez puedan ubicar
+                mejor la academia y familiarizarse con el espacio.
+              </p>
+            </div>
+
+            <div className="gallery-grid">
+              <figure className="gallery-card">
+                <img src="/assets/galeria/668769432_966058225834524_3344953963888383639_n.jpg" alt="Galería SurVial Academia 1" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/672222453_2389813544855943_3594278391770895337_n.jpg" alt="Galería SurVial Academia 2" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/672599494_978099261843680_9141658094957345129_n.jpg" alt="Galería SurVial Academia 3" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/672653479_1917225845595997_74322917286546594_n.jpg" alt="Galería SurVial Academia 4" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/672707131_963494476080003_7207044315717940231_n.jpg" alt="Galería SurVial Academia 5" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/673474372_2277976799669342_8092748666557568178_n.jpg" alt="Galería SurVial Academia 6" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/673603461_939094435684722_1273954776636122827_n.jpg" alt="Galería SurVial Academia 7" />
+              </figure>
+              <figure className="gallery-card">
+                <img src="/assets/galeria/676611456_1258872756410110_3540621224913415614_n.jpg" alt="Galería SurVial Academia 8" />
+              </figure>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-light" id="testimonios">
+          <div className="container">
+            <div className="section-heading">
+              <p className="eyebrow">Prueba social</p>
+              <h2>Una comunicación clara también se refleja en la experiencia de quienes consultan.</h2>
+            </div>
+
+            <div className="testimonials-grid">
+              <article className="testimonial-card">
+                <p>
+                  “Me explicaron muy bien qué programa necesitaba y entendí rápido la diferencia entre
+                  formación inicial y renovación.”
+                </p>
+                <strong>Martín R.</strong>
+                <span>Conductor particular</span>
+              </article>
+
+              <article className="testimonial-card">
+                <p>
+                  “La información estaba mucho más clara y ordenada. Me sirvió para ubicarme dentro
+                  del proceso y consultar con más confianza.”
+                </p>
+                <strong>Carla M.</strong>
+                <span>Conductora profesional</span>
+              </article>
+
+              <article className="testimonial-card">
+                <p>
+                  “Transmiten seriedad y profesionalismo. La parte institucional y legal me dio más
+                  tranquilidad al momento de consultar.”
+                </p>
+                <strong>Diego A.</strong>
+                <span>Chofer independiente</span>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section className="section section-contact" id="contacto">
+          <div className="container contact-grid">
+            <div className="contact-copy">
+              <p className="eyebrow">Contacto</p>
+              <h2>Consultanos por cursos, contenidos, renovaciones o información institucional.</h2>
+              <p>
+                Si necesitás información sobre capacitaciones, programas para LNC profesional,
+                certificado o requisitos generales, escribinos y te orientamos por WhatsApp.
+              </p>
+
+              <div className="contact-list">
+                <a
+                  href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20capacitaciones%20y%20la%20licencia%20profesional."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <strong>WhatsApp</strong>
+                  <span>2944-786458</span>
+                </a>
+                <a href="mailto:survial.academia@gmail.com">
+                  <strong>Email</strong>
+                  <span>survial.academia@gmail.com</span>
+                </a>
+                <div>
+                  <strong>Ubicación</strong>
+                  <span>Los Notros 173, primer piso, oficina 5, Complejo Costa Leones, Dina Huapi</span>
+                </div>
+              </div>
+
+              <div className="social-links">
+                <a href="https://www.facebook.com/" target="_blank" rel="noreferrer">
+                  <strong>Facebook</strong>
+                  <span>Sur Vial Academia de conductores</span>
+                </a>
+                <a href="https://www.tiktok.com/@sur.vial.academia" target="_blank" rel="noreferrer">
+                  <strong>TikTok</strong>
+                  <span>@sur.vial.academia</span>
+                </a>
+                <a href="https://www.instagram.com/academiasurvial/" target="_blank" rel="noreferrer">
+                  <strong>Instagram</strong>
+                  <span>@academiasurvial</span>
+                </a>
+              </div>
+            </div>
+
+            <div className="contact-panel">
+              <div className="contact-panel__surface">
+                <h3>Consulta rápida</h3>
+                <p>
+                  Te respondemos con orientación inicial sobre cursos, capacitaciones, marco legal y
+                  próximos pasos, incluso desde el inicio del trámite en
+                  lncargentina.seguridadvial.gob.ar.
+                </p>
+                <a
+                  className="button button--primary button--full"
+                  href="https://wa.me/5492944786458?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20las%20capacitaciones%20y%20la%20licencia%20profesional."
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Escribir por WhatsApp
+                </a>
+              </div>
+
+              <div className="map-card">
+                <div className="map-card__copy">
+                  <strong>Cómo llegar</strong>
+                  <p>
+                    Estamos en Los Notros 173, primer piso, oficina 5, “Complejo Costa Leones”, Dina
+                    Huapi. Como el lugar es nuevo, te dejamos el mapa para que llegar sea más fácil.
+                  </p>
+                </div>
+                <iframe
+                  title="Mapa de SurVial Academia en OpenStreetMap"
+                  src="https://www.openstreetmap.org/export/embed.html?bbox=-71.1715%2C-41.0724%2C-71.1640%2C-41.0686&layer=mapnik&marker=-41.0705%2C-71.16777"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+                <a
+                  className="map-card__link"
+                  href="https://www.openstreetmap.org/?mlat=-41.0705&mlon=-71.16777#map=18/-41.0705/-71.16777"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Abrir en OpenStreetMap
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <div className="container footer-grid">
+          <div>
+            <h2>SurVial Academia</h2>
+            <p>Capacitación con sello patagónico.</p>
+            <p className="footer-credit">
+              Desarrollado por{" "}
+              <a href="https://andinaweb.com.ar" target="_blank" rel="noreferrer">
+                Andina Web
+              </a>
+            </p>
+          </div>
+          <div className="footer-links">
+            <a href="#institucional">Institucional</a>
+            <a href="#cursos">Cursos</a>
+            <a href="#contenidos">Contenidos</a>
+            <a href="#campus">Campus</a>
+            <a href="#galeria">Galería</a>
+            <a href="#certificado">Certificado</a>
+            <a href="#contacto">Contacto</a>
+          </div>
+          <a className="footer-cta" href="/login">
+            Ingresar al campus
+          </a>
+        </div>
+      </footer>
+    </>
+  );
+}
