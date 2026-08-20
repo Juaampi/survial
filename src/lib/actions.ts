@@ -99,41 +99,59 @@ export async function logoutAction() {
 }
 
 export async function createCourseAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  const admin = await requireRole("ADMIN");
-  const title = String(formData.get("title") || "").trim();
-  const summary = String(formData.get("summary") || "").trim();
-  const description = String(formData.get("description") || "").trim();
-  const isPublished = formData.get("isPublished") === "on";
-  const thumbnailFile = formData.get("thumbnail");
+  try {
+    const admin = await requireRole("ADMIN");
+    const title = String(formData.get("title") || "").trim();
+    const summary = String(formData.get("summary") || "").trim();
+    const description = String(formData.get("description") || "").trim();
+    const isPublished = formData.get("isPublished") === "on";
+    const thumbnailFile = formData.get("thumbnail");
 
-  if (!title || !summary || !description) {
-    return { error: "Completá título, resumen y descripción." };
+    if (!title || !summary || !description) {
+      return { error: "Completá título, resumen y descripción." };
+    }
+
+    const slugBase = slugify(title);
+    if (!slugBase) {
+      return { error: "Usá un título con letras o números para poder crear el curso." };
+    }
+
+    const existing = await prisma.course.count({
+      where: { slug: { startsWith: slugBase } },
+    });
+    const slug = existing ? `${slugBase}-${existing + 1}` : slugBase;
+
+    let thumbnailUrl: string | null = null;
+
+    if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
+      try {
+        const thumbnail = await saveUpload(thumbnailFile, "course-thumbnails");
+        thumbnailUrl = thumbnail?.url ?? null;
+      } catch (error) {
+        console.error("createCourseAction upload failed", error);
+        return { error: "No pudimos guardar la portada del curso. Probá con otra imagen o crealo sin portada." };
+      }
+    }
+
+    await prisma.course.create({
+      data: {
+        title,
+        slug,
+        summary,
+        description,
+        isPublished,
+        thumbnailUrl,
+        createdById: admin.userId,
+      },
+    });
+
+    revalidatePath("/");
+    revalidatePath("/admin/cursos");
+    return { success: "Curso creado." };
+  } catch (error) {
+    console.error("createCourseAction failed", error);
+    return { error: "No pudimos crear el curso en producción. Revisá la portada o intentá de nuevo en unos segundos." };
   }
-
-  const slugBase = slugify(title);
-  const existing = await prisma.course.count({
-    where: { slug: { startsWith: slugBase } },
-  });
-  const slug = existing ? `${slugBase}-${existing + 1}` : slugBase;
-
-  const thumbnail =
-    thumbnailFile instanceof File ? await saveUpload(thumbnailFile, "course-thumbnails") : null;
-
-  await prisma.course.create({
-    data: {
-      title,
-      slug,
-      summary,
-      description,
-      isPublished,
-      thumbnailUrl: thumbnail?.url,
-      createdById: admin.userId,
-    },
-  });
-
-  revalidatePath("/");
-  revalidatePath("/admin/cursos");
-  return { success: "Curso creado." };
 }
 
 export async function createModuleAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

@@ -20,7 +20,7 @@ export function ActionForm({ action, children, submitLabel, className }: ActionF
   const [state, formAction, pending] = useActionState(action, initialState);
 
   return (
-    <form className={className || "panel-form"} action={formAction}>
+    <form className={className || "panel-form"} action={formAction} encType="multipart/form-data">
       {children}
       {state.error ? <p className="form-message form-message--error">{state.error}</p> : null}
       {state.success ? <p className="form-message form-message--success">{state.success}</p> : null}
