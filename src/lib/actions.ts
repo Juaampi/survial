@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -18,6 +19,28 @@ type ParsedQuestion = {
   prompt: string;
   options: Array<{ label: string; isCorrect: boolean }>;
 };
+
+function getActionErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof UploadValidationError) {
+    return error.message;
+  }
+
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error.code === "P2002") {
+      return "Ya existe una clase con ese título dentro del mismo módulo. Cambiá el título e intentá de nuevo.";
+    }
+  }
+
+  if (error instanceof Error) {
+    const message = error.message.toLowerCase();
+
+    if (message.includes("body") && message.includes("size")) {
+      return "El archivo es demasiado grande para enviarlo desde este formulario. Subí un PDF más liviano o dejá solo el enlace del video.";
+    }
+  }
+
+  return fallback;
+}
 
 function parseQuizQuestions(rawValue: string) {
   let parsedQuestions: ParsedQuestion[];
@@ -312,10 +335,12 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
     return { success: "Clase creada." };
   } catch (error) {
     console.error("createLessonAction failed", error);
-    if (error instanceof UploadValidationError) {
-      return { error: error.message };
-    }
-    return { error: "No pudimos guardar la clase. Si estás adjuntando un video, usá el campo URL de video." };
+    return {
+      error: getActionErrorMessage(
+        error,
+        "No pudimos guardar la clase. Revisá el PDF adjunto o probá guardar primero sin archivo.",
+      ),
+    };
   }
 }
 
@@ -460,10 +485,12 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
     return { success: "Clase actualizada." };
   } catch (error) {
     console.error("updateLessonAction failed", error);
-    if (error instanceof UploadValidationError) {
-      return { error: error.message };
-    }
-    return { error: "No pudimos actualizar la clase. Si estás adjuntando un video, usá el campo URL de video." };
+    return {
+      error: getActionErrorMessage(
+        error,
+        "No pudimos actualizar la clase. Revisá el PDF adjunto o probá guardar primero sin archivo.",
+      ),
+    };
   }
 }
 
