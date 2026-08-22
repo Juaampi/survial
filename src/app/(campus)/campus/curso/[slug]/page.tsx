@@ -4,6 +4,36 @@ import { getEnrollmentByCourseSlug } from "@/lib/queries";
 import { formatPercent } from "@/lib/utils";
 import { ActionForm } from "@/components/action-form";
 
+function getEmbeddedVideoUrl(videoUrl: string) {
+  try {
+    const url = new URL(videoUrl);
+    const host = url.hostname.replace(/^www\./, "");
+
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      const videoId = url.searchParams.get("v");
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+
+    if (host === "youtu.be") {
+      const videoId = url.pathname.split("/").filter(Boolean)[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+
+    if (host === "vimeo.com") {
+      const videoId = url.pathname.split("/").filter(Boolean)[0];
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
+    }
+
+    if (host === "player.vimeo.com") {
+      return videoUrl;
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export default async function CourseDetailPage(props: PageProps<"/campus/curso/[slug]">) {
   const session = await requireRole("STUDENT");
   const { slug } = await props.params;
@@ -66,6 +96,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
             <div className="lesson-stack">
               {module.lessons.map((lesson) => {
                 const completed = completedLessonIds.has(lesson.id);
+                const embeddedVideoUrl = lesson.videoUrl ? getEmbeddedVideoUrl(lesson.videoUrl) : null;
                 return (
                   <section className="lesson-card lesson-card--student" key={lesson.id}>
                     <div className="lesson-card__header">
@@ -89,8 +120,18 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                     {lesson.videoUrl ? (
                       <div className="lesson-feature-box">
                         <strong>Video de apoyo</strong>
+                        {embeddedVideoUrl ? (
+                          <div className="lesson-video-frame">
+                            <iframe
+                              src={embeddedVideoUrl}
+                              title={`Video de ${lesson.title}`}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                              allowFullScreen
+                            />
+                          </div>
+                        ) : null}
                         <a className="inline-link" href={lesson.videoUrl} target="_blank" rel="noreferrer">
-                          Abrir video
+                          {embeddedVideoUrl ? "Abrir video en una pestaña nueva" : "Abrir video"}
                         </a>
                       </div>
                     ) : null}
