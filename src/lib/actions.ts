@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { clearSession, authenticate, requireAnySession, requireRole, setSession } from "@/lib/auth";
 import { hashPassword } from "@/lib/password";
 import { prisma } from "@/lib/prisma";
-import { saveUpload } from "@/lib/storage";
+import { saveUpload, UploadValidationError, validateUpload } from "@/lib/storage";
 import { slugify } from "@/lib/utils";
 
 type ActionState = {
@@ -211,236 +211,260 @@ export async function updateModuleAction(_prev: ActionState, formData: FormData)
 }
 
 export async function createLessonAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireRole("ADMIN");
-  const moduleId = String(formData.get("moduleId") || "");
-  const title = String(formData.get("title") || "").trim();
-  const type = String(formData.get("type") || "TEXT") as "VIDEO" | "PDF" | "TEXT" | "QUIZ";
-  const description = String(formData.get("description") || "").trim();
-  const content = String(formData.get("content") || "").trim();
-  const videoUrl = String(formData.get("videoUrl") || "").trim();
-  const materialTitle = String(formData.get("materialTitle") || "").trim();
-  const materialFile = formData.get("materialFile");
-  const quizTitle = String(formData.get("quizTitle") || "").trim();
-  const passingScore = Number(formData.get("passingScore") || 70);
-  const questionsRaw = String(formData.get("questionsJson") || "").trim();
+  try {
+    await requireRole("ADMIN");
+    const moduleId = String(formData.get("moduleId") || "");
+    const title = String(formData.get("title") || "").trim();
+    const type = String(formData.get("type") || "TEXT") as "VIDEO" | "PDF" | "TEXT" | "QUIZ";
+    const description = String(formData.get("description") || "").trim();
+    const content = String(formData.get("content") || "").trim();
+    const videoUrl = String(formData.get("videoUrl") || "").trim();
+    const materialTitle = String(formData.get("materialTitle") || "").trim();
+    const materialFile = formData.get("materialFile");
+    const quizTitle = String(formData.get("quizTitle") || "").trim();
+    const passingScore = Number(formData.get("passingScore") || 70);
+    const questionsRaw = String(formData.get("questionsJson") || "").trim();
 
-  if (!moduleId || !title) {
-    return { error: "Elegí un módulo y un título para la clase." };
-  }
-
-  let parsedQuestions: ParsedQuestion[] = [];
-
-  if (type === "QUIZ") {
-    if (!quizTitle) {
-      return { error: "Completá el título del cuestionario." };
+    if (!moduleId || !title) {
+      return { error: "Elegí un módulo y un título para la clase." };
     }
 
-    const parsed = parseQuizQuestions(questionsRaw);
+    let parsedQuestions: ParsedQuestion[] = [];
 
-    if ("error" in parsed) {
-      return { error: parsed.error };
+    if (type === "QUIZ") {
+      if (!quizTitle) {
+        return { error: "Completá el título del cuestionario." };
+      }
+
+      const parsed = parseQuizQuestions(questionsRaw);
+
+      if ("error" in parsed) {
+        return { error: parsed.error };
+      }
+
+      parsedQuestions = parsed.data;
     }
 
-    parsedQuestions = parsed.data;
-  }
+    if (materialFile instanceof File && materialFile.size > 0) {
+      validateUpload(materialFile);
+    }
 
-  const count = await prisma.lesson.count({ where: { moduleId } });
-  const slug = slugify(title);
+    const count = await prisma.lesson.count({ where: { moduleId } });
+    const slug = slugify(title);
 
-  const createdLesson = await prisma.lesson.create({
-    data: {
-      moduleId,
-      title,
-      slug,
-      type,
-      description: description || null,
-      content: content || null,
-      videoUrl: videoUrl || null,
-      sortOrder: count + 1,
-    },
-  });
+    const createdLesson = await prisma.lesson.create({
+      data: {
+        moduleId,
+        title,
+        slug,
+        type,
+        description: description || null,
+        content: content || null,
+        videoUrl: videoUrl || null,
+        sortOrder: count + 1,
+      },
+    });
 
-  if (materialFile instanceof File && materialFile.size > 0) {
-    const upload = await saveUpload(materialFile, "lesson-materials");
-    if (upload) {
-      await prisma.material.create({
+    if (materialFile instanceof File && materialFile.size > 0) {
+      const upload = await saveUpload(materialFile, "lesson-materials");
+      if (upload) {
+        await prisma.material.create({
+          data: {
+            lessonId: createdLesson.id,
+            title: materialTitle || upload.fileName,
+            url: upload.url,
+            mimeType: upload.mimeType,
+            kind: upload.mimeType.includes("pdf")
+              ? "PDF"
+              : upload.mimeType.startsWith("image/")
+                ? "IMAGE"
+                : upload.mimeType.startsWith("video/")
+                  ? "VIDEO"
+                  : "FILE",
+          },
+        });
+      }
+    }
+
+    if (type === "QUIZ") {
+      await prisma.quiz.create({
         data: {
           lessonId: createdLesson.id,
-          title: materialTitle || upload.fileName,
-          url: upload.url,
-          mimeType: upload.mimeType,
-          kind: upload.mimeType.includes("pdf")
-            ? "PDF"
-            : upload.mimeType.startsWith("image/")
-              ? "IMAGE"
-              : upload.mimeType.startsWith("video/")
-                ? "VIDEO"
-                : "FILE",
+          title: quizTitle,
+          passingScore,
+          questions: {
+            create: parsedQuestions.map((question, questionIndex) => ({
+              prompt: question.prompt,
+              sortOrder: questionIndex + 1,
+              options: {
+                create: question.options.map((option) => ({
+                  label: option.label,
+                  isCorrect: option.isCorrect,
+                })),
+              },
+            })),
+          },
         },
       });
     }
-  }
 
-  if (type === "QUIZ") {
-    await prisma.quiz.create({
-      data: {
-        lessonId: createdLesson.id,
-        title: quizTitle,
-        passingScore,
-        questions: {
-          create: parsedQuestions.map((question, questionIndex) => ({
-            prompt: question.prompt,
-            sortOrder: questionIndex + 1,
-            options: {
-              create: question.options.map((option) => ({
-                label: option.label,
-                isCorrect: option.isCorrect,
-              })),
-            },
-          })),
-        },
-      },
-    });
+    revalidatePath("/admin/cursos");
+    return { success: "Clase creada." };
+  } catch (error) {
+    console.error("createLessonAction failed", error);
+    if (error instanceof UploadValidationError) {
+      return { error: error.message };
+    }
+    return { error: "No pudimos guardar la clase. Si estás adjuntando un video, usá el campo URL de video." };
   }
-
-  revalidatePath("/admin/cursos");
-  return { success: "Clase creada." };
 }
 
 export async function updateLessonAction(_prev: ActionState, formData: FormData): Promise<ActionState> {
-  await requireRole("ADMIN");
-  const lessonId = String(formData.get("lessonId") || "");
-  const moduleId = String(formData.get("moduleId") || "");
-  const title = String(formData.get("title") || "").trim();
-  const type = String(formData.get("type") || "TEXT") as "VIDEO" | "PDF" | "TEXT" | "QUIZ";
-  const description = String(formData.get("description") || "").trim();
-  const content = String(formData.get("content") || "").trim();
-  const videoUrl = String(formData.get("videoUrl") || "").trim();
-  const materialTitle = String(formData.get("materialTitle") || "").trim();
-  const materialFile = formData.get("materialFile");
-  const quizTitle = String(formData.get("quizTitle") || "").trim();
-  const passingScore = Number(formData.get("passingScore") || 70);
-  const questionsRaw = String(formData.get("questionsJson") || "").trim();
+  try {
+    await requireRole("ADMIN");
+    const lessonId = String(formData.get("lessonId") || "");
+    const moduleId = String(formData.get("moduleId") || "");
+    const title = String(formData.get("title") || "").trim();
+    const type = String(formData.get("type") || "TEXT") as "VIDEO" | "PDF" | "TEXT" | "QUIZ";
+    const description = String(formData.get("description") || "").trim();
+    const content = String(formData.get("content") || "").trim();
+    const videoUrl = String(formData.get("videoUrl") || "").trim();
+    const materialTitle = String(formData.get("materialTitle") || "").trim();
+    const materialFile = formData.get("materialFile");
+    const quizTitle = String(formData.get("quizTitle") || "").trim();
+    const passingScore = Number(formData.get("passingScore") || 70);
+    const questionsRaw = String(formData.get("questionsJson") || "").trim();
 
-  if (!lessonId || !moduleId || !title) {
-    return { error: "Completá módulo y título de la clase." };
-  }
-
-  const existingLesson = await prisma.lesson.findUnique({
-    where: { id: lessonId },
-    include: {
-      quiz: true,
-    },
-  });
-
-  if (!existingLesson) {
-    return { error: "No encontramos esa clase." };
-  }
-
-  let parsedQuestions: ParsedQuestion[] = [];
-
-  if (type === "QUIZ") {
-    if (!quizTitle) {
-      return { error: "Completá el título del cuestionario." };
+    if (!lessonId || !moduleId || !title) {
+      return { error: "Completá módulo y título de la clase." };
     }
 
-    const parsed = parseQuizQuestions(questionsRaw);
+    const existingLesson = await prisma.lesson.findUnique({
+      where: { id: lessonId },
+      include: {
+        quiz: true,
+      },
+    });
 
-    if ("error" in parsed) {
-      return { error: parsed.error };
+    if (!existingLesson) {
+      return { error: "No encontramos esa clase." };
     }
 
-    parsedQuestions = parsed.data;
-  }
+    let parsedQuestions: ParsedQuestion[] = [];
 
-  const duplicateSlug = slugify(title);
+    if (type === "QUIZ") {
+      if (!quizTitle) {
+        return { error: "Completá el título del cuestionario." };
+      }
 
-  await prisma.lesson.update({
-    where: { id: lessonId },
-    data: {
-      moduleId,
-      title,
-      slug: duplicateSlug,
-      type,
-      description: description || null,
-      content: content || null,
-      videoUrl: videoUrl || null,
-    },
-  });
+      const parsed = parseQuizQuestions(questionsRaw);
 
-  if (materialFile instanceof File && materialFile.size > 0) {
-    const upload = await saveUpload(materialFile, "lesson-materials");
-    if (upload) {
-      await prisma.material.create({
-        data: {
-          lessonId,
-          title: materialTitle || upload.fileName,
-          url: upload.url,
-          mimeType: upload.mimeType,
-          kind: upload.mimeType.includes("pdf")
-            ? "PDF"
-            : upload.mimeType.startsWith("image/")
-              ? "IMAGE"
-              : upload.mimeType.startsWith("video/")
-                ? "VIDEO"
-                : "FILE",
-        },
+      if ("error" in parsed) {
+        return { error: parsed.error };
+      }
+
+      parsedQuestions = parsed.data;
+    }
+
+    if (materialFile instanceof File && materialFile.size > 0) {
+      validateUpload(materialFile);
+    }
+
+    const duplicateSlug = slugify(title);
+
+    await prisma.lesson.update({
+      where: { id: lessonId },
+      data: {
+        moduleId,
+        title,
+        slug: duplicateSlug,
+        type,
+        description: description || null,
+        content: content || null,
+        videoUrl: videoUrl || null,
+      },
+    });
+
+    if (materialFile instanceof File && materialFile.size > 0) {
+      const upload = await saveUpload(materialFile, "lesson-materials");
+      if (upload) {
+        await prisma.material.create({
+          data: {
+            lessonId,
+            title: materialTitle || upload.fileName,
+            url: upload.url,
+            mimeType: upload.mimeType,
+            kind: upload.mimeType.includes("pdf")
+              ? "PDF"
+              : upload.mimeType.startsWith("image/")
+                ? "IMAGE"
+                : upload.mimeType.startsWith("video/")
+                  ? "VIDEO"
+                  : "FILE",
+          },
+        });
+      }
+    }
+
+    if (type === "QUIZ") {
+      let quizId = existingLesson.quiz?.id;
+
+      if (!quizId) {
+        const createdQuiz = await prisma.quiz.create({
+          data: {
+            lessonId,
+            title: quizTitle,
+            passingScore,
+          },
+        });
+        quizId = createdQuiz.id;
+      } else {
+        await prisma.quiz.update({
+          where: { id: quizId },
+          data: {
+            title: quizTitle,
+            passingScore,
+          },
+        });
+      }
+
+      await prisma.quizQuestion.deleteMany({
+        where: { quizId },
       });
-    }
-  }
 
-  if (type === "QUIZ") {
-    let quizId = existingLesson.quiz?.id;
-
-    if (!quizId) {
-      const createdQuiz = await prisma.quiz.create({
-        data: {
-          lessonId,
-          title: quizTitle,
-          passingScore,
-        },
-      });
-      quizId = createdQuiz.id;
-    } else {
       await prisma.quiz.update({
         where: { id: quizId },
         data: {
-          title: quizTitle,
-          passingScore,
+          questions: {
+            create: parsedQuestions.map((question, questionIndex) => ({
+              prompt: question.prompt,
+              sortOrder: questionIndex + 1,
+              options: {
+                create: question.options.map((option) => ({
+                  label: option.label,
+                  isCorrect: option.isCorrect,
+                })),
+              },
+            })),
+          },
         },
+      });
+    } else if (existingLesson.quiz) {
+      await prisma.quiz.delete({
+        where: { id: existingLesson.quiz.id },
       });
     }
 
-    await prisma.quizQuestion.deleteMany({
-      where: { quizId },
-    });
-
-    await prisma.quiz.update({
-      where: { id: quizId },
-      data: {
-        questions: {
-          create: parsedQuestions.map((question, questionIndex) => ({
-            prompt: question.prompt,
-            sortOrder: questionIndex + 1,
-            options: {
-              create: question.options.map((option) => ({
-                label: option.label,
-                isCorrect: option.isCorrect,
-              })),
-            },
-          })),
-        },
-      },
-    });
-  } else if (existingLesson.quiz) {
-    await prisma.quiz.delete({
-      where: { id: existingLesson.quiz.id },
-    });
+    revalidatePath("/admin/contenidos");
+    revalidatePath("/admin/cursos");
+    return { success: "Clase actualizada." };
+  } catch (error) {
+    console.error("updateLessonAction failed", error);
+    if (error instanceof UploadValidationError) {
+      return { error: error.message };
+    }
+    return { error: "No pudimos actualizar la clase. Si estás adjuntando un video, usá el campo URL de video." };
   }
-
-  revalidatePath("/admin/contenidos");
-  revalidatePath("/admin/cursos");
-  return { success: "Clase actualizada." };
 }
 
 export async function createStudentAction(_prev: ActionState, formData: FormData): Promise<ActionState> {

@@ -89,6 +89,7 @@ export function LessonBuilderForm({
 }: LessonBuilderFormProps) {
   const [state, formAction, pending] = useActionState(action, initialState);
   const [type, setType] = useState(initialLesson?.type || "TEXT");
+  const [selectedFileName, setSelectedFileName] = useState("");
   const [questions, setQuestions] = useState<QuizQuestion[]>(
     initialLesson?.questions?.length
       ? initialLesson.questions.map((question, questionIndex) => createQuestion(questionIndex, question))
@@ -193,7 +194,7 @@ export function LessonBuilderForm({
   }
 
   return (
-    <form className="panel-form" action={formAction}>
+    <form className="panel-form" action={formAction} encType="multipart/form-data">
       <div className="panel-form__header">
         <h2>{heading}</h2>
         <p>{description}</p>
@@ -258,13 +259,27 @@ export function LessonBuilderForm({
 
       <label>
         <span>Título del material adjunto</span>
-        <input name="materialTitle" placeholder="Por ejemplo: PDF de apoyo" />
+        <input
+          name="materialTitle"
+          placeholder={type === "VIDEO" ? "Por ejemplo: guía PDF o recursos de apoyo" : "Por ejemplo: PDF de apoyo"}
+        />
       </label>
 
       <label>
         <span>Archivo adjunto</span>
-        <input name="materialFile" type="file" />
+        <input
+          name="materialFile"
+          type="file"
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,image/*"
+          onChange={(event) => setSelectedFileName(event.target.files?.[0]?.name || "")}
+        />
       </label>
+
+      <p className="form-helper">
+        Se permiten archivos de apoyo de hasta 7 MB. Para clases de video, usá el campo `URL de video` y no subas el
+        video como archivo adjunto.
+        {selectedFileName ? ` Archivo seleccionado: ${selectedFileName}.` : ""}
+      </p>
 
       {type === "QUIZ" ? (
         <section className="quiz-builder">
