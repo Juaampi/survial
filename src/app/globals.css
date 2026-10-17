@@ -1052,6 +1052,13 @@ textarea {
   object-fit: contain;
   background: #0d1b25;
 }
+.lesson-media-video--mux {
+  display: block;
+  width: min(100%, 960px);
+  height: auto;
+  aspect-ratio: 16 / 9;
+  max-height: none;
+}
 
 .inline-link {
   color: var(--surface-strong);
