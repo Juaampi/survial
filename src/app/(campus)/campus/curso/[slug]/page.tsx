@@ -38,9 +38,11 @@ function getEmbeddedVideoUrl(videoUrl: string) {
 async function MuxVideo({ url, title }: { url: string; title: string }) {
   const playbackId = getMuxPlaybackId(url);
   if (!playbackId) return null;
-  const token = await getMuxPlaybackToken(playbackId);
-  if (!token) return <p className="form-message form-message--error">El video privado todavía no está configurado.</p>;
-  return <iframe className="lesson-media-video" src={`https://player.mux.com/${playbackId}?token=${encodeURIComponent(token)}`} title={title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen />;
+  const playback = await getMuxPlaybackToken(playbackId);
+  if (!playback.token) {
+    return <p className="form-message form-message--error">Diagnóstico Mux: {playback.error}</p>;
+  }
+  return <iframe className="lesson-media-video" src={`https://player.mux.com/${playbackId}?token=${encodeURIComponent(playback.token)}`} title={title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen />;
 }
 
 export default async function CourseDetailPage(props: PageProps<"/campus/curso/[slug]">) {

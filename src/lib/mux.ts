@@ -1,4 +1,5 @@
 import { SignJWT, importPKCS8 } from "jose";
+import { webcrypto } from "node:crypto";
 
 const MUX_API_URL = "https://api.mux.com/video/v1";
 
@@ -53,22 +54,37 @@ export async function getMuxUploadStatus(uploadId: string) {
 export async function getMuxPlaybackToken(playbackId: string) {
   const keyId = process.env.MUX_SIGNING_KEY_ID;
   const privateKey = process.env.MUX_SIGNING_PRIVATE_KEY;
-  if (!keyId || !privateKey) return null;
+  if (!keyId || !privateKey) {
+    return { token: null, error: "Faltan MUX_SIGNING_KEY_ID o MUX_SIGNING_PRIVATE_KEY en las variables de entorno." };
+  }
   try {
-    const pem = privateKey.includes("BEGIN")
+    const decoded = privateKey.includes("BEGIN")
       ? privateKey.replace(/\\n/g, "\n")
-      : Buffer.from(privateKey, "base64").toString("utf8");
-    const key = await importPKCS8(pem, "RS256");
-    return new SignJWT()
+      : Buffer.from(privateKey, "base64");
+    const decodedText = typeof decoded === "string" ? decoded : decoded.toString("utf8");
+    const key = decodedText.includes("BEGIN")
+      ? await importPKCS8(decodedText, "RS256")
+      : await webcrypto.subtle.importKey(
+          "pkcs8",
+          decoded as Buffer,
+          { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
+          false,
+          ["sign"],
+        );
+    const token = await new SignJWT()
       .setProtectedHeader({ alg: "RS256", kid: keyId })
       .setSubject(playbackId)
       .setAudience("v")
       .setIssuedAt()
       .setExpirationTime("4h")
       .sign(key);
+    return { token, error: null };
   } catch (error) {
     console.error("No se pudo firmar la reproducción privada de Mux", error);
-    return null;
+    return {
+      token: null,
+      error: error instanceof Error ? error.message : "Error desconocido al firmar el video.",
+    };
   }
 }
 
