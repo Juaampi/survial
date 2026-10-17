@@ -1029,6 +1029,30 @@ textarea {
   color: var(--text-muted);
 }
 
+.panel-form__field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.panel-form__field > span {
+  font-weight: 700;
+}
+
+.cloudinary-upload {
+  display: grid;
+  justify-items: start;
+  gap: 0.45rem;
+}
+
+.lesson-media-image,
+.lesson-media-video {
+  width: min(100%, 760px);
+  max-height: 560px;
+  border-radius: 14px;
+  object-fit: contain;
+  background: #0d1b25;
+}
+
 .inline-link {
   color: var(--surface-strong);
   font-weight: 800;

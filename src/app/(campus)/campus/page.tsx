@@ -86,7 +86,7 @@ export default async function CampusPage() {
                 <strong>{formatPercent(enrollment.progressPercent)}</strong>
               </div>
 
-              <p>{enrollment.course.summary}</p>
+              <p className="rich-copy">{enrollment.course.summary}</p>
               <div className="progress-track">
                 <span style={{ width: `${enrollment.progressPercent}%` }} />
               </div>

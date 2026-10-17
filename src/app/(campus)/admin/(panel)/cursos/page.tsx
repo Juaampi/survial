@@ -1,4 +1,5 @@
 import { ActionForm } from "@/components/action-form";
+import { CloudinaryMediaUpload } from "@/components/cloudinary-media-upload";
 import { createCourseAction, createModuleAction, updateModuleAction } from "@/lib/actions";
 import { getAdminCourses } from "@/lib/queries";
 
@@ -48,9 +49,13 @@ export default async function AdminCoursesPage() {
               <textarea name="description" rows={5} required />
             </label>
             <label>
-              <span>Portada</span>
+              <span>Portada (archivo local, hasta 7 MB)</span>
               <input name="thumbnail" type="file" accept="image/*" />
             </label>
+            <div className="panel-form__field">
+              <span>Portada desde galería (recomendada)</span>
+              <CloudinaryMediaUpload name="thumbnail" accept="image/*" />
+            </div>
             <label className="checkbox-row">
               <input name="isPublished" type="checkbox" />
               <span>Mostrar este curso en la landing</span>

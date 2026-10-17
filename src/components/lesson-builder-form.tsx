@@ -2,6 +2,9 @@
 
 import { useActionState, useMemo, useState } from "react";
 
+import { CloudinaryMediaUpload } from "@/components/cloudinary-media-upload";
+import { MuxVideoUpload } from "@/components/mux-video-upload";
+
 type ActionState = {
   error?: string;
   success?: string;
@@ -275,9 +278,20 @@ export function LessonBuilderForm({
         />
       </label>
 
+      <div className="panel-form__field">
+        <span>Foto propia</span>
+        <CloudinaryMediaUpload name="hostedImage" accept="image/*" />
+      </div>
+
+      <div className="panel-form__field">
+        <span>Video privado propio</span>
+        <MuxVideoUpload />
+      </div>
+
       <p className="form-helper">
-        Se permiten archivos de apoyo de hasta 7 MB. Para clases de video, usá el campo `URL de video` y no subas el
-        video como archivo adjunto.
+        Los archivos adjuntos locales admiten documentos e imágenes de hasta 7 MB. Para fotos usá el cargador de
+        imagen; para videos de la academia usá “Subir video privado”. Esperá a que indique que el video está listo
+        antes de guardar la clase.
         {selectedFileName ? ` Archivo seleccionado: ${selectedFileName}.` : ""}
       </p>
 

@@ -129,6 +129,7 @@ export async function createCourseAction(_prev: ActionState, formData: FormData)
     const description = String(formData.get("description") || "").trim();
     const isPublished = formData.get("isPublished") === "on";
     const thumbnailFile = formData.get("thumbnail");
+    const hostedThumbnailUrl = String(formData.get("thumbnailUrl") || "").trim();
 
     if (!title || !summary || !description) {
       return { error: "Completá título, resumen y descripción." };
@@ -144,9 +145,9 @@ export async function createCourseAction(_prev: ActionState, formData: FormData)
     });
     const slug = existing ? `${slugBase}-${existing + 1}` : slugBase;
 
-    let thumbnailUrl: string | null = null;
+    let thumbnailUrl: string | null = hostedThumbnailUrl || null;
 
-    if (thumbnailFile instanceof File && thumbnailFile.size > 0) {
+    if (!thumbnailUrl && thumbnailFile instanceof File && thumbnailFile.size > 0) {
       try {
         const thumbnail = await saveUpload(thumbnailFile, "course-thumbnails");
         thumbnailUrl = thumbnail?.url ?? null;
@@ -244,6 +245,10 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
     const videoUrl = String(formData.get("videoUrl") || "").trim();
     const materialTitle = String(formData.get("materialTitle") || "").trim();
     const materialFile = formData.get("materialFile");
+    const hostedMediaUrl = String(formData.get("hostedMediaUrl") || "").trim();
+    const hostedMediaMimeType = String(formData.get("hostedMediaMimeType") || "").trim();
+    const hostedImageUrl = String(formData.get("hostedImageUrl") || "").trim();
+    const hostedImageMimeType = String(formData.get("hostedImageMimeType") || "").trim();
     const quizTitle = String(formData.get("quizTitle") || "").trim();
     const passingScore = Number(formData.get("passingScore") || 70);
     const questionsRaw = String(formData.get("questionsJson") || "").trim();
@@ -309,6 +314,21 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
       }
     }
 
+    if (hostedMediaUrl || hostedImageUrl) {
+      const mediaUrl = hostedMediaUrl || hostedImageUrl;
+      const mediaMimeType = hostedMediaMimeType || hostedImageMimeType;
+      const kind = mediaMimeType.startsWith("video/") ? "VIDEO" : "IMAGE";
+      await prisma.material.create({
+        data: {
+          lessonId: createdLesson.id,
+          title: materialTitle || (kind === "VIDEO" ? "Video de la clase" : "Imagen de la clase"),
+          url: mediaUrl,
+          mimeType: mediaMimeType || null,
+          kind,
+        },
+      });
+    }
+
     if (type === "QUIZ") {
       await prisma.quiz.create({
         data: {
@@ -356,6 +376,10 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
     const videoUrl = String(formData.get("videoUrl") || "").trim();
     const materialTitle = String(formData.get("materialTitle") || "").trim();
     const materialFile = formData.get("materialFile");
+    const hostedMediaUrl = String(formData.get("hostedMediaUrl") || "").trim();
+    const hostedMediaMimeType = String(formData.get("hostedMediaMimeType") || "").trim();
+    const hostedImageUrl = String(formData.get("hostedImageUrl") || "").trim();
+    const hostedImageMimeType = String(formData.get("hostedImageMimeType") || "").trim();
     const quizTitle = String(formData.get("quizTitle") || "").trim();
     const passingScore = Number(formData.get("passingScore") || 70);
     const questionsRaw = String(formData.get("questionsJson") || "").trim();
@@ -429,6 +453,21 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
           },
         });
       }
+    }
+
+    if (hostedMediaUrl || hostedImageUrl) {
+      const mediaUrl = hostedMediaUrl || hostedImageUrl;
+      const mediaMimeType = hostedMediaMimeType || hostedImageMimeType;
+      const kind = mediaMimeType.startsWith("video/") ? "VIDEO" : "IMAGE";
+      await prisma.material.create({
+        data: {
+          lessonId,
+          title: materialTitle || (kind === "VIDEO" ? "Video de la clase" : "Imagen de la clase"),
+          url: mediaUrl,
+          mimeType: mediaMimeType || null,
+          kind,
+        },
+      });
     }
 
     if (type === "QUIZ") {

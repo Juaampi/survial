@@ -3,6 +3,7 @@ import { requireRole } from "@/lib/auth";
 import { getEnrollmentByCourseSlug } from "@/lib/queries";
 import { formatPercent } from "@/lib/utils";
 import { ActionForm } from "@/components/action-form";
+import { getMuxPlaybackId, getMuxPlaybackToken } from "@/lib/mux";
 
 function getEmbeddedVideoUrl(videoUrl: string) {
   try {
@@ -34,6 +35,14 @@ function getEmbeddedVideoUrl(videoUrl: string) {
   }
 }
 
+async function MuxVideo({ url, title }: { url: string; title: string }) {
+  const playbackId = getMuxPlaybackId(url);
+  if (!playbackId) return null;
+  const token = await getMuxPlaybackToken(playbackId);
+  if (!token) return <p className="form-message form-message--error">El video privado todavía no está configurado.</p>;
+  return <iframe className="lesson-media-video" src={`https://player.mux.com/${playbackId}?token=${encodeURIComponent(token)}`} title={title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen />;
+}
+
 export default async function CourseDetailPage(props: PageProps<"/campus/curso/[slug]">) {
   const session = await requireRole("STUDENT");
   const { slug } = await props.params;
@@ -60,7 +69,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
         <div>
           <p className="eyebrow">Curso activo</p>
           <h1>{enrollment.course.title}</h1>
-          <p>{enrollment.course.description}</p>
+          <p className="rich-copy">{enrollment.course.description}</p>
         </div>
         <div className="course-progress-pill">{formatPercent(enrollment.progressPercent)}</div>
       </section>
@@ -90,7 +99,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                 <span className="panel-kicker">Módulo {module.sortOrder}</span>
                 <h2>{module.title}</h2>
               </div>
-              {module.description ? <p>{module.description}</p> : null}
+              {module.description ? <p className="rich-copy">{module.description}</p> : null}
             </div>
 
             <div className="lesson-stack">
@@ -115,7 +124,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                       </form>
                     </div>
 
-                    {lesson.description ? <p>{lesson.description}</p> : null}
+                    {lesson.description ? <p className="rich-copy">{lesson.description}</p> : null}
                     {lesson.content ? <div className="rich-copy">{lesson.content}</div> : null}
                     {lesson.videoUrl ? (
                       <div className="lesson-feature-box">
@@ -140,11 +149,18 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                       <section className="lesson-feature-box">
                         <strong>Materiales del tema</strong>
                         <div className="material-list">
-                          {lesson.materials.map((material) => (
-                            <a key={material.id} href={material.url} target="_blank" rel="noreferrer">
-                              {material.title}
-                            </a>
-                          ))}
+                          {lesson.materials.map((material) => {
+                            if (material.kind === "IMAGE") {
+                              return <img className="lesson-media-image" key={material.id} src={material.url} alt={material.title} />;
+                            }
+                            if (material.kind === "VIDEO") {
+                              if (getMuxPlaybackId(material.url)) {
+                                return <MuxVideo key={material.id} url={material.url} title={material.title} />;
+                              }
+                              return <video className="lesson-media-video" key={material.id} controls preload="metadata" src={material.url}>Tu navegador no puede reproducir este video.</video>;
+                            }
+                            return <a key={material.id} href={material.url} target="_blank" rel="noreferrer">{material.title}</a>;
+                          })}
                         </div>
                       </section>
                     ) : null}
