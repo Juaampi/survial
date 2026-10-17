@@ -54,17 +54,22 @@ export async function getMuxPlaybackToken(playbackId: string) {
   const keyId = process.env.MUX_SIGNING_KEY_ID;
   const privateKey = process.env.MUX_SIGNING_PRIVATE_KEY;
   if (!keyId || !privateKey) return null;
-  const pem = privateKey.includes("BEGIN")
-    ? privateKey.replace(/\\n/g, "\n")
-    : Buffer.from(privateKey, "base64").toString("utf8");
-  const key = await importPKCS8(pem, "RS256");
-  return new SignJWT()
-    .setProtectedHeader({ alg: "RS256", kid: keyId })
-    .setSubject(playbackId)
-    .setAudience("v")
-    .setIssuedAt()
-    .setExpirationTime("4h")
-    .sign(key);
+  try {
+    const pem = privateKey.includes("BEGIN")
+      ? privateKey.replace(/\\n/g, "\n")
+      : Buffer.from(privateKey, "base64").toString("utf8");
+    const key = await importPKCS8(pem, "RS256");
+    return new SignJWT()
+      .setProtectedHeader({ alg: "RS256", kid: keyId })
+      .setSubject(playbackId)
+      .setAudience("v")
+      .setIssuedAt()
+      .setExpirationTime("4h")
+      .sign(key);
+  } catch (error) {
+    console.error("No se pudo firmar la reproducción privada de Mux", error);
+    return null;
+  }
 }
 
 export function getMuxPlaybackId(url: string) {
