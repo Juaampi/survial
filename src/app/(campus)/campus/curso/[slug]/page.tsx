@@ -42,7 +42,7 @@ async function MuxVideo({ url, title }: { url: string; title: string }) {
   if (!playback.token) {
     return <p className="form-message form-message--error">Diagnóstico Mux: {playback.error}</p>;
   }
-  return <iframe className="lesson-media-video" src={`https://player.mux.com/${playbackId}?token=${encodeURIComponent(playback.token)}`} title={title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen />;
+  return <iframe className="lesson-media-video" src={`https://player.mux.com/${playbackId}?playback-token=${encodeURIComponent(playback.token)}`} title={title} allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowFullScreen />;
 }
 
 export default async function CourseDetailPage(props: PageProps<"/campus/curso/[slug]">) {
