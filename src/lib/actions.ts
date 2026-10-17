@@ -249,6 +249,8 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
     const hostedMediaMimeType = String(formData.get("hostedMediaMimeType") || "").trim();
     const hostedImageUrl = String(formData.get("hostedImageUrl") || "").trim();
     const hostedImageMimeType = String(formData.get("hostedImageMimeType") || "").trim();
+    const hasLocalVideo = materialFile instanceof File && materialFile.size > 0 && materialFile.type.startsWith("video/");
+    const hasLocalMaterial = materialFile instanceof File && materialFile.size > 0 && !hasLocalVideo;
     const quizTitle = String(formData.get("quizTitle") || "").trim();
     const passingScore = Number(formData.get("passingScore") || 70);
     const questionsRaw = String(formData.get("questionsJson") || "").trim();
@@ -273,7 +275,11 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
       parsedQuestions = parsed.data;
     }
 
-    if (materialFile instanceof File && materialFile.size > 0) {
+    if (hasLocalVideo && !hostedMediaUrl.startsWith("mux://")) {
+      return { error: "Usá ‘Subir video privado’ y esperá el mensaje de video listo antes de guardar la clase." };
+    }
+
+    if (hasLocalMaterial && materialFile instanceof File) {
       validateUpload(materialFile);
     }
 
@@ -293,7 +299,7 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
       },
     });
 
-    if (materialFile instanceof File && materialFile.size > 0) {
+    if (hasLocalMaterial && materialFile instanceof File) {
       const upload = await saveUpload(materialFile, "lesson-materials");
       if (upload) {
         await prisma.material.create({
@@ -380,6 +386,8 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
     const hostedMediaMimeType = String(formData.get("hostedMediaMimeType") || "").trim();
     const hostedImageUrl = String(formData.get("hostedImageUrl") || "").trim();
     const hostedImageMimeType = String(formData.get("hostedImageMimeType") || "").trim();
+    const hasLocalVideo = materialFile instanceof File && materialFile.size > 0 && materialFile.type.startsWith("video/");
+    const hasLocalMaterial = materialFile instanceof File && materialFile.size > 0 && !hasLocalVideo;
     const quizTitle = String(formData.get("quizTitle") || "").trim();
     const passingScore = Number(formData.get("passingScore") || 70);
     const questionsRaw = String(formData.get("questionsJson") || "").trim();
@@ -415,7 +423,11 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
       parsedQuestions = parsed.data;
     }
 
-    if (materialFile instanceof File && materialFile.size > 0) {
+    if (hasLocalVideo && !hostedMediaUrl.startsWith("mux://")) {
+      return { error: "Usá ‘Subir video privado’ y esperá el mensaje de video listo antes de guardar la clase." };
+    }
+
+    if (hasLocalMaterial && materialFile instanceof File) {
       validateUpload(materialFile);
     }
 
@@ -434,7 +446,7 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
       },
     });
 
-    if (materialFile instanceof File && materialFile.size > 0) {
+    if (hasLocalMaterial && materialFile instanceof File) {
       const upload = await saveUpload(materialFile, "lesson-materials");
       if (upload) {
         await prisma.material.create({

@@ -1,6 +1,6 @@
 import { submitQuizAction, toggleLessonProgressAction } from "@/lib/actions";
-import { requireRole } from "@/lib/auth";
-import { getEnrollmentByCourseSlug } from "@/lib/queries";
+import { requireAnySession } from "@/lib/auth";
+import { getAdminCourseBySlug, getEnrollmentByCourseSlug } from "@/lib/queries";
 import { formatPercent } from "@/lib/utils";
 import { ActionForm } from "@/components/action-form";
 import { getMuxPlaybackId, getMuxPlaybackToken } from "@/lib/mux";
@@ -44,11 +44,13 @@ async function MuxVideo({ url, title }: { url: string; title: string }) {
 }
 
 export default async function CourseDetailPage(props: PageProps<"/campus/curso/[slug]">) {
-  const session = await requireRole("STUDENT");
+  const session = await requireAnySession();
   const { slug } = await props.params;
-  const enrollment = await getEnrollmentByCourseSlug(session.userId, slug);
+  const enrollment = session.role === "STUDENT" ? await getEnrollmentByCourseSlug(session.userId, slug) : null;
+  const previewCourse = session.role === "ADMIN" ? await getAdminCourseBySlug(slug) : null;
+  const course = enrollment?.course || previewCourse;
 
-  if (!enrollment) {
+  if (!course) {
     return (
       <main className="dashboard-content">
         <article className="panel-card">
@@ -60,7 +62,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
   }
 
   const completedLessonIds = new Set(
-    enrollment.progressEntries.filter((entry) => entry.completedAt).map((entry) => entry.lessonId),
+    enrollment?.progressEntries.filter((entry) => entry.completedAt).map((entry) => entry.lessonId) || [],
   );
 
   return (
@@ -68,31 +70,31 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
       <section className="dashboard-hero dashboard-hero--student">
         <div>
           <p className="eyebrow">Curso activo</p>
-          <h1>{enrollment.course.title}</h1>
-          <p className="rich-copy">{enrollment.course.description}</p>
+          <h1>{course.title}</h1>
+          <p className="rich-copy">{course.description}</p>
         </div>
-        <div className="course-progress-pill">{formatPercent(enrollment.progressPercent)}</div>
+        <div className="course-progress-pill">{enrollment ? formatPercent(enrollment.progressPercent) : "Vista previa"}</div>
       </section>
 
       <section className="course-detail-summary">
         <article className="panel-card">
           <span className="panel-kicker">Módulos</span>
-          <strong>{enrollment.course.modules.length}</strong>
+          <strong>{course.modules.length}</strong>
         </article>
         <article className="panel-card">
           <span className="panel-kicker">Clases</span>
           <strong>
-            {enrollment.course.modules.reduce((acc, module) => acc + module.lessons.length, 0)}
+            {course.modules.reduce((acc, module) => acc + module.lessons.length, 0)}
           </strong>
         </article>
         <article className="panel-card">
           <span className="panel-kicker">Evaluaciones</span>
-          <strong>{enrollment.quizAttempts.length}</strong>
+          <strong>{enrollment?.quizAttempts.length || 0}</strong>
         </article>
       </section>
 
       <section className="stack-layout">
-        {enrollment.course.modules.map((module) => (
+        {course.modules.map((module) => (
           <article className="panel-card" key={module.id}>
             <div className="module-header">
               <div>
@@ -107,21 +109,21 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                 const completed = completedLessonIds.has(lesson.id);
                 const embeddedVideoUrl = lesson.videoUrl ? getEmbeddedVideoUrl(lesson.videoUrl) : null;
                 return (
-                  <section className="lesson-card lesson-card--student" key={lesson.id}>
+                  <section className="lesson-card lesson-card--student" id={`clase-${lesson.id}`} key={lesson.id}>
                     <div className="lesson-card__header">
                       <div>
                         <span className="panel-kicker">{lesson.type}</span>
                         <h3>{lesson.title}</h3>
                       </div>
 
-                      <form action={toggleLessonProgressAction}>
+                      {enrollment ? <form action={toggleLessonProgressAction}>
                         <input type="hidden" name="enrollmentId" value={enrollment.id} />
                         <input type="hidden" name="lessonId" value={lesson.id} />
                         <input type="hidden" name="completed" value={String(!completed)} />
                         <button className="button button--ghost" type="submit">
                           {completed ? "Marcar pendiente" : "Marcar completada"}
                         </button>
-                      </form>
+                      </form> : <span className="course-badge course-badge--soft">Vista de administrador</span>}
                     </div>
 
                     {lesson.description ? <p className="rich-copy">{lesson.description}</p> : null}
@@ -165,7 +167,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                       </section>
                     ) : null}
 
-                    {lesson.quiz ? (
+                    {lesson.quiz && enrollment ? (
                       <ActionForm action={submitQuizAction} submitLabel="Enviar cuestionario" className="quiz-form">
                         <input type="hidden" name="enrollmentId" value={enrollment.id} />
                         <input type="hidden" name="quizId" value={lesson.quiz.id} />

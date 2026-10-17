@@ -1,4 +1,5 @@
 import { LessonBuilderForm } from "@/components/lesson-builder-form";
+import Link from "next/link";
 import { createLessonAction, updateLessonAction } from "@/lib/actions";
 import { getAdminLessonBuilderData } from "@/lib/queries";
 
@@ -70,6 +71,9 @@ export default async function AdminContentsPage() {
                             </summary>
 
                             <div className="lesson-edit-shell__body">
+                              <Link className="button button--ghost button--small" href={`/campus/curso/${course.slug}#clase-${lesson.id}`} target="_blank">
+                                Ver clase como alumno
+                              </Link>
                               <LessonBuilderForm
                                 action={updateLessonAction}
                                 submitLabel="Guardar cambios de la clase"

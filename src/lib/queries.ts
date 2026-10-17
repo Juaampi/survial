@@ -139,6 +139,30 @@ export async function getAdminLessonBuilderData() {
   });
 }
 
+export async function getAdminCourseBySlug(slug: string) {
+  return prisma.course.findUnique({
+    where: { slug },
+    include: {
+      modules: {
+        include: {
+          lessons: {
+            include: {
+              materials: true,
+              quiz: {
+                include: {
+                  questions: { include: { options: true }, orderBy: { sortOrder: "asc" } },
+                },
+              },
+            },
+            orderBy: { sortOrder: "asc" },
+          },
+        },
+        orderBy: { sortOrder: "asc" },
+      },
+    },
+  });
+}
+
 export async function getStudentDashboard(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
