@@ -1,5 +1,5 @@
-import { SignJWT, importPKCS8 } from "jose";
-import { webcrypto } from "node:crypto";
+import { SignJWT } from "jose";
+import { createPrivateKey } from "node:crypto";
 
 const MUX_API_URL = "https://api.mux.com/video/v1";
 
@@ -63,14 +63,14 @@ export async function getMuxPlaybackToken(playbackId: string) {
       : Buffer.from(privateKey, "base64");
     const decodedText = typeof decoded === "string" ? decoded : decoded.toString("utf8");
     const key = decodedText.includes("BEGIN")
-      ? await importPKCS8(decodedText, "RS256")
-      : await webcrypto.subtle.importKey(
-          "pkcs8",
-          decoded as Buffer,
-          { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-          false,
-          ["sign"],
-        );
+      ? createPrivateKey(decodedText)
+      : (() => {
+          try {
+            return createPrivateKey({ key: decoded as Buffer, format: "der", type: "pkcs8" });
+          } catch {
+            return createPrivateKey({ key: decoded as Buffer, format: "der", type: "pkcs1" });
+          }
+        })();
     const token = await new SignJWT()
       .setProtectedHeader({ alg: "RS256", kid: keyId })
       .setSubject(playbackId)
