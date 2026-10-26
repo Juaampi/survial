@@ -1025,6 +1025,7 @@ textarea {
 
 .rich-copy {
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
   line-height: 1.8;
   color: var(--text-muted);
 }

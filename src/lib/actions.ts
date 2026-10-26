@@ -8,6 +8,7 @@ import { clearSession, authenticate, requireAnySession, requireRole, setSession 
 import { hashPassword } from "@/lib/password";
 import { prisma } from "@/lib/prisma";
 import { saveUpload, UploadValidationError, validateUpload } from "@/lib/storage";
+import { normalizePastedText } from "@/lib/text";
 import { slugify } from "@/lib/utils";
 
 type ActionState = {
@@ -125,8 +126,8 @@ export async function createCourseAction(_prev: ActionState, formData: FormData)
   try {
     const admin = await requireRole("ADMIN");
     const title = String(formData.get("title") || "").trim();
-    const summary = String(formData.get("summary") || "").trim();
-    const description = String(formData.get("description") || "").trim();
+    const summary = normalizePastedText(String(formData.get("summary") || ""));
+    const description = normalizePastedText(String(formData.get("description") || ""));
     const isPublished = formData.get("isPublished") === "on";
     const thumbnailFile = formData.get("thumbnail");
     const hostedThumbnailUrl = String(formData.get("thumbnailUrl") || "").trim();
@@ -182,7 +183,7 @@ export async function createModuleAction(_prev: ActionState, formData: FormData)
   await requireRole("ADMIN");
   const courseId = String(formData.get("courseId") || "");
   const title = String(formData.get("title") || "").trim();
-  const description = String(formData.get("description") || "").trim();
+  const description = normalizePastedText(String(formData.get("description") || ""));
 
   if (!courseId || !title) {
     return { error: "Elegí un curso y un título para el módulo." };
@@ -207,7 +208,7 @@ export async function updateModuleAction(_prev: ActionState, formData: FormData)
   await requireRole("ADMIN");
   const moduleId = String(formData.get("moduleId") || "");
   const title = String(formData.get("title") || "").trim();
-  const description = String(formData.get("description") || "").trim();
+  const description = normalizePastedText(String(formData.get("description") || ""));
 
   if (!moduleId || !title) {
     return { error: "Completá el título del módulo." };
@@ -240,8 +241,8 @@ export async function createLessonAction(_prev: ActionState, formData: FormData)
     const moduleId = String(formData.get("moduleId") || "");
     const title = String(formData.get("title") || "").trim();
     const type = String(formData.get("type") || "TEXT") as "VIDEO" | "PDF" | "TEXT" | "QUIZ";
-    const description = String(formData.get("description") || "").trim();
-    const content = String(formData.get("content") || "").trim();
+    const description = normalizePastedText(String(formData.get("description") || ""));
+    const content = normalizePastedText(String(formData.get("content") || ""));
     const videoUrl = String(formData.get("videoUrl") || "").trim();
     const materialTitle = String(formData.get("materialTitle") || "").trim();
     const materialFile = formData.get("materialFile");
@@ -377,8 +378,8 @@ export async function updateLessonAction(_prev: ActionState, formData: FormData)
     const moduleId = String(formData.get("moduleId") || "");
     const title = String(formData.get("title") || "").trim();
     const type = String(formData.get("type") || "TEXT") as "VIDEO" | "PDF" | "TEXT" | "QUIZ";
-    const description = String(formData.get("description") || "").trim();
-    const content = String(formData.get("content") || "").trim();
+    const description = normalizePastedText(String(formData.get("description") || ""));
+    const content = normalizePastedText(String(formData.get("content") || ""));
     const videoUrl = String(formData.get("videoUrl") || "").trim();
     const materialTitle = String(formData.get("materialTitle") || "").trim();
     const materialFile = formData.get("materialFile");

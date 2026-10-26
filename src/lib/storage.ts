@@ -7,6 +7,17 @@ import { sanitizeFileName } from "@/lib/utils";
 
 const LOCAL_UPLOAD_ROOT = path.join(process.cwd(), "public", "uploads");
 const MAX_UPLOAD_SIZE_BYTES = 7 * 1024 * 1024;
+const CONTENT_TYPES: Record<string, string> = {
+  ".avif": "image/avif",
+  ".gif": "image/gif",
+  ".jpeg": "image/jpeg",
+  ".jpg": "image/jpeg",
+  ".png": "image/png",
+  ".svg": "image/svg+xml",
+  ".webp": "image/webp",
+  ".pdf": "application/pdf",
+  ".txt": "text/plain; charset=utf-8",
+};
 
 export class UploadValidationError extends Error {
   constructor(message: string) {
@@ -28,6 +39,14 @@ function isNetlifyBlobMode() {
 
 function getStoreName() {
   return process.env.NETLIFY_BLOBS_STORE || "survial-academia-files";
+}
+
+function getContentType(fileName: string, storedContentType?: string) {
+  if (storedContentType && storedContentType !== "application/octet-stream") {
+    return storedContentType;
+  }
+
+  return CONTENT_TYPES[path.extname(fileName).toLowerCase()] || "application/octet-stream";
 }
 
 export function validateUpload(file: File, options?: { allowVideo?: boolean }) {
@@ -83,7 +102,10 @@ export async function readUpload(key: string) {
 
     return {
       buffer: Buffer.from(entry.data),
-      contentType: String(entry.metadata.contentType || "application/octet-stream"),
+      contentType: getContentType(
+        String(entry.metadata.fileName || path.basename(key)),
+        String(entry.metadata.contentType || "application/octet-stream"),
+      ),
       fileName: String(entry.metadata.fileName || path.basename(key)),
     };
   }
@@ -94,7 +116,7 @@ export async function readUpload(key: string) {
     const buffer = await readFile(fullPath);
     return {
       buffer,
-      contentType: "application/octet-stream",
+      contentType: getContentType(fullPath),
       fileName: path.basename(fullPath),
     };
   } catch {
