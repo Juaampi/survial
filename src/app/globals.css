@@ -1030,6 +1030,14 @@ textarea {
   color: var(--text-muted);
 }
 
+.rich-copy p {
+  margin: 0 0 1rem;
+}
+
+.rich-copy p:last-child {
+  margin-bottom: 0;
+}
+
 .panel-form__field {
   display: grid;
   gap: 0.5rem;
