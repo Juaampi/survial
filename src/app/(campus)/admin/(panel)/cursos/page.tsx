@@ -3,6 +3,26 @@ import { PreserveTextPasteTextarea } from "@/components/preserve-text-paste-text
 import { CloudinaryMediaUpload } from "@/components/cloudinary-media-upload";
 import { createCourseAction, createModuleAction, updateModuleAction } from "@/lib/actions";
 import { getAdminCourses } from "@/lib/queries";
+import { formatReadingText } from "@/lib/text";
+
+function ReadingText({ value }: { value: string }) {
+  const paragraphs = formatReadingText(value).split(/\n{2,}/).filter(Boolean);
+
+  return (
+    <div className="rich-copy">
+      {paragraphs.map((paragraph, paragraphIndex) => (
+        <p key={`${paragraphIndex}-${paragraph.slice(0, 24)}`}>
+          {paragraph.split("\n").map((line, lineIndex) => (
+            <span key={`${lineIndex}-${line.slice(0, 16)}`}>
+              {lineIndex > 0 ? <br /> : null}
+              {line}
+            </span>
+          ))}
+        </p>
+      ))}
+    </div>
+  );
+}
 
 function getLessonTypeLabel(type: string) {
   switch (type) {
@@ -102,7 +122,7 @@ export default async function AdminCoursesPage() {
                 <span className="panel-kicker">{course.isPublished ? "Publicado" : "Borrador"}</span>
                 <h2>{course.title}</h2>
               </div>
-              <p>{course.summary}</p>
+              <ReadingText value={course.summary} />
             </div>
 
             <div className="admin-course-tree">
@@ -112,7 +132,7 @@ export default async function AdminCoursesPage() {
                     <span className="panel-kicker">Módulo {module.sortOrder}</span>
                     <h3>{module.title}</h3>
                   </div>
-                  {module.description ? <p>{module.description}</p> : null}
+                  {module.description ? <ReadingText value={module.description} /> : null}
 
                   <ActionForm
                     action={updateModuleAction}
