@@ -2,6 +2,33 @@ import { LessonBuilderForm } from "@/components/lesson-builder-form";
 import Link from "next/link";
 import { createLessonAction, updateLessonAction } from "@/lib/actions";
 import { getAdminLessonBuilderData } from "@/lib/queries";
+import { formatReadingText } from "@/lib/text";
+
+function ReadingText({ value }: { value: string }) {
+  const paragraphs = formatReadingText(value).split(/\n+/).filter(Boolean);
+  const preview = paragraphs.slice(0, 3);
+  const remaining = paragraphs.slice(3);
+
+  const renderParagraphs = (items: string[], prefix: string) => (
+    <div className="rich-copy">
+      {items.map((paragraph, paragraphIndex) => (
+        <p key={`${prefix}-${paragraphIndex}-${paragraph.slice(0, 24)}`}>{paragraph}</p>
+      ))}
+    </div>
+  );
+
+  return (
+    <>
+      {renderParagraphs(preview, "preview")}
+      {remaining.length > 0 ? (
+        <details className="reading-text-toggle">
+          <summary>Ver descripción completa</summary>
+          {renderParagraphs(remaining, "remaining")}
+        </details>
+      ) : null}
+    </>
+  );
+}
 
 export default async function AdminContentsPage() {
   const courses = await getAdminLessonBuilderData();
@@ -49,7 +76,7 @@ export default async function AdminContentsPage() {
                         <span className="panel-kicker">Módulo {module.sortOrder}</span>
                         <h3>{module.title}</h3>
                       </div>
-                      {module.description ? <p>{module.description}</p> : null}
+                      {module.description ? <ReadingText value={module.description} /> : null}
 
                       <div className="course-lesson-list">
                         {module.lessons.map((lesson) => (
