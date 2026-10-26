@@ -1024,6 +1024,8 @@ textarea {
 }
 
 .rich-copy {
+  display: grid;
+  gap: 1rem;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   line-height: 1.8;
@@ -1031,11 +1033,22 @@ textarea {
 }
 
 .rich-copy p {
-  margin: 0 0 1rem;
+  margin: 0;
 }
 
-.rich-copy p:last-child {
-  margin-bottom: 0;
+.reading-text-toggle {
+  margin-top: 0.85rem;
+}
+
+.reading-text-toggle summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--surface-strong);
+  font-weight: 800;
+}
+
+.reading-text-toggle[open] summary {
+  margin-bottom: 1rem;
 }
 
 .panel-form__field {

@@ -5,13 +5,15 @@ import { createCourseAction, createModuleAction, updateModuleAction } from "@/li
 import { getAdminCourses } from "@/lib/queries";
 import { formatReadingText } from "@/lib/text";
 
-function ReadingText({ value }: { value: string }) {
-  const paragraphs = formatReadingText(value).split(/\n{2,}/).filter(Boolean);
+function ReadingText({ value, collapsible = false }: { value: string; collapsible?: boolean }) {
+  const paragraphs = formatReadingText(value).split(/\n+/).filter(Boolean);
+  const preview = collapsible ? paragraphs.slice(0, 3) : paragraphs;
+  const remaining = collapsible ? paragraphs.slice(3) : [];
 
-  return (
+  const renderParagraphs = (items: string[], prefix: string) => (
     <div className="rich-copy">
-      {paragraphs.map((paragraph, paragraphIndex) => (
-        <p key={`${paragraphIndex}-${paragraph.slice(0, 24)}`}>
+      {items.map((paragraph, paragraphIndex) => (
+        <p key={`${prefix}-${paragraphIndex}-${paragraph.slice(0, 24)}`}>
           {paragraph.split("\n").map((line, lineIndex) => (
             <span key={`${lineIndex}-${line.slice(0, 16)}`}>
               {lineIndex > 0 ? <br /> : null}
@@ -21,6 +23,18 @@ function ReadingText({ value }: { value: string }) {
         </p>
       ))}
     </div>
+  );
+
+  return (
+    <>
+      {renderParagraphs(preview, "preview")}
+      {remaining.length > 0 ? (
+        <details className="reading-text-toggle">
+          <summary>Ver descripción completa</summary>
+          {renderParagraphs(remaining, "remaining")}
+        </details>
+      ) : null}
+    </>
   );
 }
 
@@ -122,7 +136,7 @@ export default async function AdminCoursesPage() {
                 <span className="panel-kicker">{course.isPublished ? "Publicado" : "Borrador"}</span>
                 <h2>{course.title}</h2>
               </div>
-              <ReadingText value={course.summary} />
+              <ReadingText value={course.summary} collapsible />
             </div>
 
             <div className="admin-course-tree">
@@ -132,7 +146,7 @@ export default async function AdminCoursesPage() {
                     <span className="panel-kicker">Módulo {module.sortOrder}</span>
                     <h3>{module.title}</h3>
                   </div>
-                  {module.description ? <ReadingText value={module.description} /> : null}
+                  {module.description ? <ReadingText value={module.description} collapsible /> : null}
 
                   <ActionForm
                     action={updateModuleAction}
