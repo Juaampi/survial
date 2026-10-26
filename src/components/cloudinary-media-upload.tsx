@@ -7,9 +7,6 @@ type CloudinaryMediaUploadProps = {
   accept?: string;
 };
 
-const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
-
 export function CloudinaryMediaUpload({ name, accept = "image/*,video/*" }: CloudinaryMediaUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [status, setStatus] = useState<"idle" | "uploading" | "ready" | "error">("idle");
@@ -18,22 +15,37 @@ export function CloudinaryMediaUpload({ name, accept = "image/*,video/*" }: Clou
   const [mimeType, setMimeType] = useState("");
 
   async function upload(file: File) {
-    if (!cloudName || !uploadPreset) {
-      setStatus("error");
-      setMessage("Falta configurar Cloudinary. Consultá las variables indicadas en el archivo .env.example.");
-      return;
-    }
-
     setStatus("uploading");
     setMessage("Subiendo archivo...");
     setUrl("");
 
     try {
+      const signatureResponse = await fetch("/api/cloudinary/signature", { method: "POST" });
+      const signatureResult = (await signatureResponse.json()) as {
+        cloudName?: string;
+        apiKey?: string;
+        timestamp?: number;
+        signature?: string;
+        error?: string;
+      };
+
+      if (
+        !signatureResponse.ok ||
+        !signatureResult.cloudName ||
+        !signatureResult.apiKey ||
+        !signatureResult.timestamp ||
+        !signatureResult.signature
+      ) {
+        throw new Error(signatureResult.error || "No pudimos autorizar la carga en Cloudinary.");
+      }
+
       const data = new FormData();
       data.append("file", file);
-      data.append("upload_preset", uploadPreset);
+      data.append("api_key", signatureResult.apiKey);
+      data.append("timestamp", String(signatureResult.timestamp));
+      data.append("signature", signatureResult.signature);
       const resourceType = file.type.startsWith("video/") ? "video" : "image";
-      const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${signatureResult.cloudName}/${resourceType}/upload`, {
         method: "POST",
         body: data,
       });
