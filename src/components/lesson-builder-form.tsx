@@ -2,6 +2,8 @@
 
 import { useActionState, useMemo, useState } from "react";
 
+import { PreserveTextPasteTextarea } from "@/components/preserve-text-paste-textarea";
+
 import { CloudinaryMediaUpload } from "@/components/cloudinary-media-upload";
 import { MuxVideoUpload } from "@/components/mux-video-upload";
 
@@ -240,12 +242,12 @@ export function LessonBuilderForm({
 
       <label>
         <span>Descripción breve</span>
-        <textarea name="description" rows={3} defaultValue={initialLesson?.description || ""} />
+        <PreserveTextPasteTextarea name="description" rows={3} defaultValue={initialLesson?.description || ""} />
       </label>
 
       <label>
         <span>Contenido</span>
-        <textarea
+        <PreserveTextPasteTextarea
           name="content"
           rows={5}
           defaultValue={initialLesson?.content || ""}

@@ -2,6 +2,7 @@ import { submitQuizAction, toggleLessonProgressAction } from "@/lib/actions";
 import { requireAnySession } from "@/lib/auth";
 import { getAdminCourseBySlug, getEnrollmentByCourseSlug } from "@/lib/queries";
 import { formatPercent } from "@/lib/utils";
+import { formatReadingText } from "@/lib/text";
 import { ActionForm } from "@/components/action-form";
 import { getMuxPlaybackId, getMuxPlaybackToken } from "@/lib/mux";
 
@@ -73,7 +74,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
         <div>
           <p className="eyebrow">Curso activo</p>
           <h1>{course.title}</h1>
-          <p className="rich-copy">{course.description}</p>
+          <p className="rich-copy">{formatReadingText(course.description)}</p>
         </div>
         <div className="course-progress-pill">{enrollment ? formatPercent(enrollment.progressPercent) : "Vista previa"}</div>
       </section>
@@ -103,7 +104,7 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                 <span className="panel-kicker">Módulo {module.sortOrder}</span>
                 <h2>{module.title}</h2>
               </div>
-              {module.description ? <p className="rich-copy">{module.description}</p> : null}
+              {module.description ? <p className="rich-copy">{formatReadingText(module.description)}</p> : null}
             </div>
 
             <div className="lesson-stack">
@@ -128,8 +129,8 @@ export default async function CourseDetailPage(props: PageProps<"/campus/curso/[
                       </form> : <span className="course-badge course-badge--soft">Vista de administrador</span>}
                     </div>
 
-                    {lesson.description ? <p className="rich-copy">{lesson.description}</p> : null}
-                    {lesson.content ? <div className="rich-copy">{lesson.content}</div> : null}
+                    {lesson.description ? <p className="rich-copy">{formatReadingText(lesson.description)}</p> : null}
+                    {lesson.content ? <div className="rich-copy">{formatReadingText(lesson.content)}</div> : null}
                     {lesson.videoUrl ? (
                       <div className="lesson-feature-box">
                         <strong>Video de apoyo</strong>

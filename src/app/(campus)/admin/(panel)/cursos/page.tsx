@@ -1,4 +1,5 @@
 import { ActionForm } from "@/components/action-form";
+import { PreserveTextPasteTextarea } from "@/components/preserve-text-paste-textarea";
 import { CloudinaryMediaUpload } from "@/components/cloudinary-media-upload";
 import { createCourseAction, createModuleAction, updateModuleAction } from "@/lib/actions";
 import { getAdminCourses } from "@/lib/queries";
@@ -42,11 +43,11 @@ export default async function AdminCoursesPage() {
             </label>
             <label>
               <span>Resumen</span>
-              <textarea name="summary" rows={3} required />
+              <PreserveTextPasteTextarea name="summary" rows={3} required />
             </label>
             <label>
               <span>Descripción</span>
-              <textarea name="description" rows={5} required />
+              <PreserveTextPasteTextarea name="description" rows={5} required />
             </label>
             <label>
               <span>Portada (archivo local, hasta 7 MB)</span>
@@ -87,7 +88,7 @@ export default async function AdminCoursesPage() {
             </label>
             <label>
               <span>Descripción</span>
-              <textarea name="description" rows={4} />
+              <PreserveTextPasteTextarea name="description" rows={4} />
             </label>
           </ActionForm>
         </article>
@@ -126,7 +127,7 @@ export default async function AdminCoursesPage() {
                       </label>
                       <label className="module-edit-grid__full">
                         <span>Descripción</span>
-                        <textarea name="description" rows={3} defaultValue={module.description || ""} />
+                        <PreserveTextPasteTextarea name="description" rows={3} defaultValue={module.description || ""} />
                       </label>
                     </div>
                   </ActionForm>
